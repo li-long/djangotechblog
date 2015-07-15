@@ -54,6 +54,18 @@ class Page(models.Model):
             return "%s (%s)" % (self.path, self.version)
         return self.path
 
+    def serialize(self):
+        return {
+            "title": self.title,
+            "slug": self.slug,
+            "created_time": self.created_time.ctime(),
+            "edit_time": self.edit_time.ctime() if self.edit_time else None,
+            "published": self.published,
+            "content": self.content,
+            "content_html": self.content_html,
+            "version": self.version
+        }
+
     def get_sections(self):
 
         visited = set()

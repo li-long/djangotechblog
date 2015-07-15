@@ -50,7 +50,18 @@ class Comment(models.Model):
     def __unicode__(self):
         return self.name
 
-
+    def serialize(self):
+        return {
+            "visible": self.visible,
+            "moderated": self.moderated,
+            "name": self.name,
+            "email": self.email,
+            "url": self.url,
+            "markup": self.content_markup_type.split('_', 1)[-1],
+            "content_source": self.content,
+            "content": self.content_html,
+            "created_time": self.created_time.ctime()
+        }
 
     def site_link(self):
         object_url = self.object_url() + '#comment' +str(self.id)

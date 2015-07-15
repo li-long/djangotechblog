@@ -407,6 +407,23 @@ class Post(models.Model):
     objects = models.Manager()
     published_posts = PublisedPostManager()
 
+    def serialize(self):
+        return {
+            "blog": self.blog.slug,
+            "title": self.title,
+            "slug": self.slug,
+            "published": self.published,
+            "guid": self.guid,
+            "created_time": self.created_time.ctime() if self.created_time else None,
+            "edit_time": self.edit_time.ctime() if self.edit_time else None,
+            "display_time": self.display_time.ctime() if self.display_time else None,
+            "tags": self.tags_text or "",
+            "source": self.content,
+            "content": self.content_html,
+            "version": self.version
+        }
+
+
     def get_tags(self):
         return self.tags.filter(count__gt=0)
 
