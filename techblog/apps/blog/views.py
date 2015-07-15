@@ -2,7 +2,7 @@
 import models
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, render_to_response
-from django.http import Http404, HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.core.paginator import Paginator
 from django.conf import settings
 from django.template.context import RequestContext
@@ -26,6 +26,7 @@ import operator
 from itertools import groupby
 import forms
 
+import json
 from techblog import mailer
 
 
@@ -444,6 +445,18 @@ def import_wxr(request, blog_slug='', blog_root=''):
     return render_to_response("blog/tools/import_wxr.html",
                               td,
                               context_instance=RequestContext(request))
+
+
+@login_required
+def export(request, blog_slug='', blog_root=''):
+    export_data = tools.get_export_data()
+    export_json = json.dumps(export_data, indent=4, separators=(',', ': '))
+    response = HttpResponse(export_json,
+                            content_type="application/json")
+    response['content-disposition'] = "attachment; filename=blog.json"
+    return response
+
+
 
 def blog_search(request, blog_slug, blog_root=None):
 

@@ -10,7 +10,7 @@ urlpatterns = patterns(
     url(r'^xhr/preview_comment/$', views.xhr_preview_comment, name="xhr_preview_comment"),
 
     url(r'^tools/import/$', views.import_wxr, name='import_wxr'),
-
+    url(r'^tools/export/$', views.export, name='export'),
 
     url(r'^feeds/posts/$', BlogFeed(), {'feed_item': 'posts'}, name="blog_feeds"),
     url(r'^feeds/tag/(?P<tag_slug>[\w-]*)/$', BlogTagFeed(), {'feed_item': 'tag'}, name="blog_tag_feeds"),

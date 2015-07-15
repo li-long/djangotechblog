@@ -6,11 +6,14 @@ from django.template.defaultfilters import slugify
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.db import transaction
+from techblog.apps.comments.models import Comment
+from techblog.apps.pages.models import Page
 
 from techblog import broadcast
 import time
 import datetime
 import re
+
 #from BeautifulSoup import BeautifulSoup
 
 try:
@@ -245,3 +248,33 @@ def import_wxr(blog_slug, wxr_file, included_tags, excluded_tags):
                                            content_markup_type="html",
                                            content_type=ct,
                                            group="blog."+blog.slug)
+
+
+def get_export_data():
+
+    posts = []
+    for post in models.Post.objects.all():
+        _post = post.serialize()
+
+        groups = ["blog." + post.blog.slug]
+        comments = Comment.objects.filter_for_model(models.Post).filter(group__in=groups, object_id=post.id).order_by('-created_time')
+        _post['comments'] = [comment.serialize() for comment in comments]
+        posts.append(_post)
+
+    pages = []
+    for page in Page.objects.all():
+        _page = page.serialize()
+        comments = Comment.objects.filter_for_model(Page).filter(object_id=page.id).order_by('-created_time')
+        _page['comments'] = [comment.serialize() for comment in comments]
+        pages.append(_page)
+
+    # comments = []
+    # for comment in Comment.objects.all():
+    #     comments.append(comment.serialize())
+
+    export_data = {
+        "posts": posts,
+        "pages": pages
+    }
+
+    return export_data
